@@ -18,19 +18,36 @@
 #define LED_G 11
 #define LED_B 12
 
-// Definição das variáveis globais para a PIO e máquina de estado 
+// variáveis globais
 static PIO pio;
 static uint sm;
-
-// estrutura que armazena dados para um LED
 typedef struct{
     uint8_t R;
     uint8_t G;
     uint8_t B;
 } led;
-
-// buffer dedicado aos LEDs e inicializa todos com 0
 volatile led matriz_led[LED_COUNT] = {0};
+
+// assinaturas das funções implementadas e descritas abaixo do main
+uint32_t valor_rgb(uint8_t, uint8_t, uint8_t);
+void clear_leds(void);
+void print_leds(void);
+void config(void);
+
+int main(){
+    
+    config();
+    // configuração da PIO para a matriz de leds
+    pio = pio0; 
+    set_sys_clock_khz(128000, false);
+    uint offset = pio_add_program(pio, &ws2812b_program);
+    sm = pio_claim_unused_sm(pio, true);
+    ws2812b_program_init(pio, sm, offset, LED_PIN);
+    
+    while(true){
+        
+    }
+}
 
 // função que une os dados binários dos LEDs para emitir para a PIO
 uint32_t valor_rgb(uint8_t B, uint8_t R, uint8_t G){
@@ -47,7 +64,7 @@ void set_led(uint8_t indice, uint8_t r, uint8_t g, uint8_t b){
 }
 
 // função que limpa o buffer de leds
-void clear_leds(){
+void clear_leds(void){
     for(uint8_t i = 0; i < LED_COUNT; i++){
         matriz_led[i].R = 0;
         matriz_led[i].B = 0;
@@ -56,7 +73,7 @@ void clear_leds(){
 }
 
 // função que manda os dados do buffer para os LEDs
-void print_leds(){
+void print_leds(void){
     uint32_t valor;
     for(uint8_t i = 0; i < LED_COUNT; i++){
         valor = valor_rgb(matriz_led[i].B, matriz_led[i].R,matriz_led[i].G);
@@ -64,21 +81,6 @@ void print_leds(){
     }
 }
 
-void config(){
+void config(void){
 
-}
-
-int main(){
-    
-    config();
-    // configuração da PIO para a matriz de leds
-    pio = pio0; 
-    set_sys_clock_khz(128000, false);
-    uint offset = pio_add_program(pio, &ws2812b_program);
-    sm = pio_claim_unused_sm(pio, true);
-    ws2812b_program_init(pio, sm, offset, LED_PIN);
-
-    while(true){
-
-    }
 }
