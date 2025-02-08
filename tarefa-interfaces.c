@@ -5,9 +5,11 @@
 #include "inc/ssd1306.h"
 #include "inc/font.h"
 #include "hardware/pio.h"
+#include "hardware/clocks.h"
 #include "ws2812b.pio.h"
 
 #define LED_PIN 7
+#define LED_COUNT 25
 #define BOTAO_A 5
 #define BOTAO_B 6
 #define I2C_PORT i2c1
@@ -28,7 +30,7 @@ typedef struct{
 } led;
 volatile led matriz_led[LED_COUNT] = {0};
 
-// assinaturas das funções implementadas e descritas abaixo do main
+// assinaturas das funções implementadas 
 uint32_t valor_rgb(uint8_t, uint8_t, uint8_t);
 void clear_leds(void);
 void print_leds(void);
@@ -36,7 +38,9 @@ void config(void);
 
 int main(){
     
+    // configuraçõs das GPIO
     config();
+
     // configuração da PIO para a matriz de leds
     pio = pio0; 
     set_sys_clock_khz(128000, false);

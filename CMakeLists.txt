@@ -62,6 +62,7 @@ target_include_directories(tarefa-interfaces PRIVATE
 target_link_libraries(tarefa-interfaces 
         hardware_i2c
         hardware_pio
+        hardware_clock
         )
 
 pico_add_extra_outputs(tarefa-interfaces)
