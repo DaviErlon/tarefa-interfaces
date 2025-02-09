@@ -89,18 +89,24 @@ int main(){
     // variável que é escrita no monitor serial
     char c;
 
+    ssd1306_draw_string(&ssd, "CARACTERE", 12, 6);
+    ssd1306_rect(&ssd, 4, 92, 14, 14, true, false);
+    ssd1306_draw_string(&ssd, "LED AZUL  off", 12, 30);
+    ssd1306_draw_string(&ssd, "LED VERDE off", 12, 44);
+    ssd1306_send_data(&ssd);
+
     while(true){
 
         if (flag & (1 << 1)){
             
             if(flag & (1 << 0)){
                 printf("O Led azul foi ligado!\n");
-
+                ssd1306_draw_string(&ssd, "LED AZUL  on ", 12, 30);
             } else {
                 printf("O Led azul foi desligado!\n");
-
+                ssd1306_draw_string(&ssd, "LED AZUL  off", 12, 30);
             }
-
+            ssd1306_send_data(&ssd);
             flag &= ~(1 << 1);
         }
         
@@ -108,12 +114,12 @@ int main(){
             
             if (flag & (1 << 2)){
                 printf("O Led verde foi ligado!\n");
-
+                ssd1306_draw_string(&ssd, "LED VERDE on ", 12, 44);
             } else {
                 printf("O Led verde foi desligado!\n");
-
+                ssd1306_draw_string(&ssd, "LED VERDE off", 12, 44);
             }
-
+            ssd1306_send_data(&ssd);
             flag &= ~(1 << 3);
         }
 
