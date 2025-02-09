@@ -42,6 +42,7 @@ static volatile uint8_t flag = 0b0000;
 uint32_t valor_rgb(uint8_t, uint8_t, uint8_t);
 void clear_leds(void);
 void print_leds(void);
+void set_led(uint8_t, uint8_t, uint8_t, uint8_t);
 void config(void);
 void gpio_callback(uint, uint32_t);
 
@@ -72,6 +73,9 @@ int main(){
     uint offset = pio_add_program(pio, &ws2812b_program);
     sm = pio_claim_unused_sm(pio, true);
     ws2812b_program_init(pio, sm, offset, LED_PIN);
+    // inicialização dos leds apagados
+    clear_leds();
+    print_leds(); 
 
     // configurações para o display OLED
     i2c_init(I2C_PORT, 400 * 1000);
@@ -82,15 +86,31 @@ int main(){
     ssd1306_t ssd;
     ssd1306_init(&ssd, WIDTH, HEIGHT, false, endereco, I2C_PORT);
     ssd1306_config(&ssd);
-    ssd1306_send_data(&ssd);
     ssd1306_fill(&ssd, false);
     ssd1306_send_data(&ssd);
 
-    // variável que é escrita no monitor serial
+    // variável que é escrita pelo monitor serial
     char c;
 
+    // configurações dos leds
+    const uint16_t desenho[10] = {
+        0x1FBF, // 0
+        0x529,  // 1
+        0x1DF7, // 2
+        0x1DEF, // 3
+        0x17E9, // 4
+        0x1EEF, // 5
+        0x1EFF, // 6 
+        0x1D29, // 7
+        0x1FFF, // 8
+        0x1FEF  // 9
+    };
+    // leds utilizados para fazer os números
+    const uint8_t leds_usados[13] = {1,2,3,8,6,11,12,13,18,16,21,22,23};
+
+    // tela padrão do display OLED
     ssd1306_draw_string(&ssd, "CARACTERE", 12, 6);
-    ssd1306_rect(&ssd, 4, 92, 14, 14, true, false);
+    ssd1306_rect(&ssd, 2, 92, 14, 14, true, false);
     ssd1306_draw_string(&ssd, "LED AZUL  off", 12, 30);
     ssd1306_draw_string(&ssd, "LED VERDE off", 12, 44);
     ssd1306_send_data(&ssd);
@@ -123,9 +143,24 @@ int main(){
             flag &= ~(1 << 3);
         }
 
-        if (tud_cdc_available()) { 
+        if (tud_cdc_available()){ 
             c = getchar();
-            
+            if ( (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || c == ' '){
+                ssd1306_draw_char(&ssd, c, 95, 5);
+                ssd1306_send_data(&ssd);
+
+                if (c >= '0' && c <= '9'){
+                    clear_leds();
+                    uint16_t temp = desenho[c - '0'];
+                    for(uint8_t i = 0; i < 13; i++){
+                        if(temp & 1){
+                        matriz_led[leds_usados[i]].R = 10;
+                        }
+                        temp = temp >> 1;
+                    }
+                    print_leds();
+                }
+            }
         }
     }
 }
