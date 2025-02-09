@@ -29,6 +29,13 @@ typedef struct{
     uint8_t B;
 } led;
 volatile led matriz_led[LED_COUNT] = {0};
+
+/* Esta variável é composta por 4 bits que se portam como flags independentes
+    *bit[0] contém o estado do led azul
+    *bit[1] quando em 1 o loop manda mensagens para o display e para o monitor serial sobre o led azul
+    *bit[2] contém o estado do led verde
+    *bit[3] quando em 1 o loop manda mensagens para o display e para o monitor serial sobre o led verde
+*/
 static volatile uint8_t flag = 0b0000;
 
 // assinaturas das funções implementadas 
@@ -79,6 +86,7 @@ int main(){
     ssd1306_fill(&ssd, false);
     ssd1306_send_data(&ssd);
 
+    // variável que é escrita no monitor serial
     char c;
 
     while(true){
@@ -149,9 +157,9 @@ void print_leds(void){
 }
 
 /*
-Esta função é uma função de callback e modifica os bits de uma flag,
-para poupar variáveis, tratei de cada bit por si só já se comportar 
-como uma flag para funções no loop da main
+Esta função é uma função callback da interrupção dos botões,
+ela modifica a flag citada acima para mandar instruções no
+loop principal do código
 */
 void gpio_callback(uint gpio, uint32_t events){
 
