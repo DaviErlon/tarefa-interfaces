@@ -14,6 +14,3 @@ recebido no monitor serial. O arquivo `ws2812b.pio` contém as instruções em a
 computador via uart_usb, por um monitor serial, que recebe e envia dados. E, por fim, modifiquei o arquivo `font.h` para suportar caracteres minúsculos utilizando de um script
 em python que está na pasta `script-fontes`, para desenhar em um quadrado 8x8 e obter diretamente o seu valor em decimal, esse script foi feito por IA e não é de minha
 autoria, mas me auxiliou e me deu agilidade para o cálculo dos hexadecimais das fontes.
-
-### Vídeo demostrativo
-  O vídeo se encontra no drive pelo [Link](https://drive.google.com/file/d/1KNAeEg4WB6Gqd0ZtqmX69JWs-Z_QWC4L/view?usp=drive_link).
